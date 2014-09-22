@@ -6,6 +6,7 @@ Share online media content on your [ScreenInvader](https://github.com/Metalab/Sc
 
 1. Makes sure you have **Unknown sources** enabled in **Settings → Security**
 2. Download and install the latest .apk from the [Releases page](https://github.com/PwnicornDev/ScreenInvader-Android/releases) on your Android device
+3. [Watch the repository](https://github.com/PwnicornDev/ScreenInvader-Android/subscription) to get notified of new versions
 
 ### Build the app!
 
