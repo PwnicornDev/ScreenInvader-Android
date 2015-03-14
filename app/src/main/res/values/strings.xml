@@ -18,9 +18,9 @@
   -->
 <resources>
 
-    <string name="app_name">ScreenInvader</string>
-    <string name="no_wifi_toast">No WiFi connected!</string>
-    <string name="posturl_success">" sent to ScreenInvader"</string>
-    <string name="http_client_exception">"HTTP Client Exception: "</string>
+	<string name="app_name">ScreenInvader</string>
+	<string name="no_wifi_toast">No WiFi connected!</string>
+	<string name="posturl_success">" sent to ScreenInvader"</string>
+	<string name="io_exception">"IO Exception: "</string>
 
 </resources>

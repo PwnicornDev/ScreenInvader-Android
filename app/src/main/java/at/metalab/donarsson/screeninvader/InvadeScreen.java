@@ -28,62 +28,64 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.Toast;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class InvadeScreen extends Activity {
 
-    String invader = "10.20.30.40"; //TODO: Don't hard-code ip, automatically select based on connected WiFi
+	String invader = "10.20.30.40"; //TODO: Don't hard-code ip, automatically select based on connected WiFi
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (networkInfo.isConnected()) {
-            //TODO: Check if we know a ScreenInvader on this network
-            Intent intent = getIntent();
-            String type = intent.getType();
-            if (type.startsWith("text/")) {
-                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
-                Pattern pattern = Patterns.WEB_URL;
-                Matcher matcher = pattern.matcher(text);
-                while (matcher.find()) {
-                    String url = matcher.group();
-                    new PostUrlTask().execute(url);
-                }
-            } //TODO: Add support for other types (file upload)
-        } else {
-            //TODO: Display a prompt to connect to a WiFi
-            Toast.makeText(getApplicationContext(), getString(R.string.no_wifi_toast), Toast.LENGTH_LONG).show();
-        }
-        finish();
-    }
+		ConnectivityManager connectivityManager = (ConnectivityManager)
+				getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		if (networkInfo.isConnected()) {
+			//TODO: Check if we know a ScreenInvader on this network
+			Intent intent = getIntent();
+			String type = intent.getType();
+			if (type.startsWith("text/")) {
+				String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+				Pattern pattern = Patterns.WEB_URL;
+				Matcher matcher = pattern.matcher(text);
+				while (matcher.find()) {
+					String url = matcher.group();
+					new PostUrlTask().execute(url);
+				}
+			} //TODO: Add support for other types (file upload)
+		} else {
+			//TODO: Display a prompt to connect to a WiFi
+			Toast.makeText(getApplicationContext(), getString(R.string.no_wifi_toast), Toast.LENGTH_LONG).show();
+		}
+		finish();
+	}
 
 
-    private class PostUrlTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... url) {
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-                httpClient.execute(new HttpGet("http://"+invader+"/cgi-bin/show?"+url[0]));
-                return url[0]+getString(R.string.posturl_success);
-            } catch (Exception e) {
-                //TODO: Prompt user to report bug on GitHub
-                return getString(R.string.http_client_exception);
-            }
-        }
+	private class PostUrlTask extends AsyncTask<String, Void, String> {
+		@Override
+		protected String doInBackground(String... url) {
+			try {
+				URL requestUrl = new URL("http://" + invader + "/cgi-bin/show?" + url[0]);
+				HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
+				urlConnection.getInputStream(); // We don't need the response
+				urlConnection.disconnect();
+				return url[0]+getString(R.string.posturl_success);
+			} catch (IOException e) {
+				//TODO: Prompt user to report bug on GitHub
+				e.printStackTrace();
+				return getString(R.string.io_exception);
+			}
+		}
 
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-        }
-    }
+		@Override
+		protected void onPostExecute(String result) {
+			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+		}
+	}
 }
