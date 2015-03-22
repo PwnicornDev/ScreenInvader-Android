@@ -37,7 +37,8 @@ import java.util.regex.Pattern;
 
 public class InvadeScreen extends Activity {
 
-	String invader = "10.20.30.40"; //TODO: Don't hard-code ip, automatically select based on connected WiFi
+	//TODO: Don't hard-code ip, automatically select based on connected WiFi
+	String invader = "10.20.30.40";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,8 @@ public class InvadeScreen extends Activity {
 
 		ConnectivityManager connectivityManager = (ConnectivityManager)
 				getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		NetworkInfo networkInfo = connectivityManager.getNetworkInfo(
+				ConnectivityManager.TYPE_WIFI);
 		if (networkInfo.isConnected()) {
 			//TODO: Check if we know a ScreenInvader on this network
 			Intent intent = getIntent();
@@ -61,7 +63,8 @@ public class InvadeScreen extends Activity {
 			} //TODO: Add support for other types (file upload)
 		} else {
 			//TODO: Display a prompt to connect to a WiFi
-			Toast.makeText(getApplicationContext(), getString(R.string.no_wifi_toast), Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(),
+					getString(R.string.no_wifi_toast), Toast.LENGTH_LONG).show();
 		}
 		finish();
 	}
@@ -71,8 +74,10 @@ public class InvadeScreen extends Activity {
 		@Override
 		protected String doInBackground(String... url) {
 			try {
-				URL requestUrl = new URL("http://" + invader + "/cgi-bin/show?" + url[0]);
-				HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
+				URL requestUrl = new URL(
+						"http://" + invader + "/cgi-bin/show?" + url[0]);
+				HttpURLConnection urlConnection = (HttpURLConnection)
+						requestUrl.openConnection();
 				urlConnection.getInputStream(); // We don't need the response
 				urlConnection.disconnect();
 				return url[0]+getString(R.string.posturl_success);
@@ -85,7 +90,8 @@ public class InvadeScreen extends Activity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(),
+					result, Toast.LENGTH_LONG).show();
 		}
 	}
 }
